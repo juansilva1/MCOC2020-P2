@@ -95,19 +95,46 @@ class Barra(object):
 
 
 	def chequear_diseño(self, Fu, ret, ϕ=0.9):
-		"""Para la fuerza Fu (proveniente de una combinacion de cargas)
-		revisar si esta barra cumple las disposiciones de diseño.
-		"""
+		A = self.calcular_area()
+		Fn = A * self.σy
+
+		#Revisar resistencia nominal
+		if abs(Fu) > ϕ*Fn:
+			print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
 		return False
+
+		L = self.calcular_largo(ret)
+		I = np.pi/4 * (self.R**4 - (self.R - self.t)**4)
+		i = np.sqrt(I/A)
+
+		#Revisar radio de giro
+		if Fu >= 0 and L/i > 300:
+			print(f"Esbeltez Fu = {Fu} L/i = {L/i}")
+			return False
+
+		#Revisar carga critica de pandeo
+		if Fu < 0:  #solo en traccion
+			Pcr = np.pi**2*self.E*I / L**2
+			if abs(Fu) > Pcr:
+				print(f"Pandeo Fu = {Fu} Pcr = {Pcr}")
+				return False
+
+		#Si pasa todas las pruebas, estamos bien
+		return True
+
+
+
+
+
+
+
 
 
 	def obtener_factor_utilizacion(self, Fu, ϕ=0.9):
-		"""Para la fuerza Fu (proveniente de una combinacion de cargas)
-		calcular y devolver el factor de utilización
-		"""
-		FU = 0. 
+		A = self.calcular_area()
+		Fn = A * self.σy
 
-		return FU
+		return abs(Fu) / (ϕ*Fn)
 
 
 	def rediseñar(self, Fu, ret, ϕ=0.9):

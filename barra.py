@@ -107,7 +107,7 @@ class Barra(object):
         #Revisar resistencia nominal
         if abs(Fu) > ϕ*Fn:
             print(f"Resistencia nominal Fu = {Fu} ϕ*Fn = {ϕ*Fn}")
-        return False
+            return False
 
         L = self.calcular_largo(ret)
         I = np.pi/4 * (self.R**4 - (self.R - self.t)**4)
